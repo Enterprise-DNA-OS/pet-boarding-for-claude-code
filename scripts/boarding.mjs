@@ -623,7 +623,7 @@ export function human(value) {
     if (!value.length) return '  (none)';
     if (value[0]?.question) return value.map((x) => `${x.number}. ${x.question}\n${human(x.rows)}`).join('\n\n');
     const keys = Object.keys(value[0]).filter((k) => !hidden(k));
-    return table(value, keys.map((key) => ({ key: key, label: key.replace(/_cents$/, '').replaceAll('_', ' '), align: key.endsWith('_cents') ? 'right' : 'left', width: ['finding', 'item', 'source'].includes(key) ? 100 : 48,
+    return table(value, keys.map((key) => ({ key: key, label: key.replace(/_cents$/, '').replaceAll('_', ' '), align: key.endsWith('_cents') ? 'right' : 'left', width: ['finding', 'item', 'source', 'missing', 'lapses'].includes(key) ? 100 : 48,
       format: (v) => (v instanceof Date ? v.toISOString().slice(0, 16).replace('T', ' ') : key.endsWith('_cents') && v != null ? (Number(v) / 100).toFixed(2) : v == null ? '' : String(v)) })));
   }
   if (value && typeof value === 'object') {

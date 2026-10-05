@@ -1,0 +1,5 @@
+{
+  "_": "Map your Gingr headings to the fields the import reads. Only the ones that differ: the field on the left, your heading on the right.",
+  "phone": "Mobile Number",
+  "vet": "Preferred Vet"
+}

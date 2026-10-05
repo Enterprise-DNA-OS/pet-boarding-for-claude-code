@@ -22,11 +22,40 @@ Fill this in once. A worker with context knows. A worker without it guesses.
 
 | When the operator asks for... | Use this |
 |---|---|
-| <!-- TODO(author): one row per slash command --> | `/...` |
+| Who is in, the run sheet, who needs feeding or meds | `/in-house` |
+| Who is arriving / going home | `/arrivals`, `/departures` |
+| Daycare today | `/daycare` |
+| How full are we, Christmas, school holidays | `/occupancy` |
+| Book a pet in | `/book` |
+| Check in / check out | `/check-in`, `/check-out` |
+| Cancel or no-show | `/cancel` |
+| Move to another run or isolation | `/move` |
+| They ate, had meds, walked | `/log` |
+| Something happened (injury, illness, fight, escape) | `/incident` |
+| A vaccination certificate came in | `/vaccinate` |
+| Whose vaccination is missing before they arrive | `/vax-due` |
+| Money in, who owes | `/pay`, `/balances` |
+| Daycare packages | `/sell-package`, `/packages` |
+| A pet, an owner, a stay | `/pet`, `/owner`, `/stay` |
+| What needs doing today | `/attention` |
+| Are we compliant | `/compliance` |
+| Monday review | `/weekly-review` |
+| Write to an owner | `/draft-reminder`, `/draft-confirmation`, `/draft-report-card` |
+| Questions the old system could not answer | `/questions` |
+| Takings | `/revenue` |
+| Bring data from Gingr | `/import` |
+| Back up everything | `/export` |
+| Add or change an owner, pet, run, site or rate | `/add` |
+| Kennel cards, admission records, statements | `/documents` |
+| A page to look at or print | `/view`, `/new-view` |
+| Change a field, a rule, a stage | `/customise` |
 
-If an ask fits nothing here, run the CLI directly (`npm run <cli> -- --help`) and then propose a new command for it.
+If an ask fits nothing here, run the CLI directly (`node scripts/boarding.mjs help`) and then propose a new command for it.
 
 ## Hard rules
+
+- An animal without current vaccination cover goes in the isolation run, or its check-in records why (`--override`). Never write an override reason the operator did not give.
+- Vet treatment during a stay is told to the owner before check-out. Check-out refuses until `tell-owner` is recorded.
 
 - Never send email or messages from here. Draft to `drafts/`, a person sends.
 - Never delete records without an explicit yes in this session. Prefer marking closed or archived.

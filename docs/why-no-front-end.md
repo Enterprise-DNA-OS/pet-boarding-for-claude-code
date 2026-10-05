@@ -1,24 +1,26 @@
 # Why there is no front end
 
-Gingr is a database with a subscription. The tables underneath it are ordinary: a few entities, a few relationships, a handful of workflows you repeat every week. What you pay for is the layer on top that lets people who do not write SQL get at those tables. Screens, filters, dashboards, forms.
+Gingr is a database with a subscription. Underneath it are ordinary records: owners, pets, vaccinations, runs, bookings, care notes, incidents, packages and payments. What you pay for is the layer on top that lets people who do not write database queries get at them: the lodging calendar, the check-in screen, the dashboards.
 
-That layer used to be the whole product, because talking to a database was hard. It is not hard any more. Open this folder in Claude Code, describe what you want, and it writes the query, runs it, and explains the answer. Ask a question the dashboard never had a chart for and you still get an answer.
+That layer used to be the whole product, because talking to a database was hard. It is not hard any more. Open this folder in Claude Code and say "who is coming in tomorrow, and whose vaccination is not current?" and it runs the right command and answers. Ask a question the dashboard never had a report for and you still get an answer.
 
 ## What you gain
 
-- **Better answers.** A dashboard shows what the vendor decided to chart. Here you ask your own question, in your own words, and get it answered against your own data.
-- **No seats.** Everyone who needs to look can look. The bill does not grow with headcount.
-- **Your data in your Postgres.** Plain tables. Back them up, query them from anything, leave any time. There is no export step because there is nothing to leave.
-- **A process that matches you.** When your way of working changes, you add a command. You do not wait for a feature request to clear.
+- **Better answers.** Which nights over Christmas are already full, which regulars have stopped coming, which owners owe money and have booked again. Ask it in your own words.
+- **The rules checked for you.** Vaccination cover, isolation, admission records and medication logs, against the code that applies to your site, every time you ask.
+- **No per-location fee.** A second site is a row in a table.
+- **Your data in a database you own.** Back it up, query it from anything, leave any time.
 
-## What you give up
+## What a screen gives that this does not
 
-- **A visual board.** Stages are a table you ask about, not cards you drag.
-- **A phone app.** It runs where Claude Code runs.
-- **A vendor help desk.** This is open source. Enterprise DNA supports the installed version for businesses that want someone to call.
+- **A drag-and-drop lodging calendar.** Here occupancy is a table and a printed page (`npm run view`), and moving a dog is one line.
+- **An owner app and online booking.** Owners here book by phone, email or a form you choose. Enterprise DNA builds an online booking page when you want one.
+- **Report card photos.** The go-home note here is text from the care log.
+- **Taking card payments.** This records payments; it does not process them.
+- **Tablet check-in at the front desk.** It runs where Claude Code runs: a laptop at the desk works.
 
 ## Who this fits
 
-Small teams who already use Claude Code, or who would rather learn to ask than learn another interface. If your team needs a screen to look at all day, keep Gingr. If you need the answers more than the screens, this is cheaper, faster and yours.
+Kennels, catteries and daycares whose owner or manager would rather ask than click, and who want the rules checked without paying for a top tier. If your front desk needs a screen all day, keep Gingr, or have Enterprise DNA build a simple screen on top of this database.
 
 Installed and run for you: https://enterprisedna.co/omni/instead-of/gingr

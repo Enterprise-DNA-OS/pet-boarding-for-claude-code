@@ -40,11 +40,24 @@
 
 Pet Boarding for Claude Code does the job you pay Gingr for, as a Postgres database and a set of agent commands. There is no web front end. You open the folder in [Claude Code](https://claude.com/claude-code) (or Codex, OpenCode, Cursor: see `AGENTS.md`) and ask for what you want in plain language. It runs the right query, and it can answer questions the Gingr dashboard cannot.
 
-<!-- TODO(author): the annual bill. One sentence: what a 10 to 50 person business typically pays Gingr per year, all in, with a source. -->
+Gingr's Stay plan for boarding facilities lists US$179 a month with its integrated payments, or US$154 a month billed annually (US$1,848 a year), and US$209 a month without its payments ([gingrapp.com/pricing](https://www.gingrapp.com/pricing), checked 5 October 2026). Groups with several sites get a quote. This is free, and a second site is a row in a table.
 
 Want the same thing with a web front end, or built on a different stack? That is a customisation, and it is exactly what Enterprise DNA does: [book a call](https://enterprisedna.co/omni/book/?utm_source=github&utm_medium=readme&utm_campaign=gingr).
 
-<!-- TODO(author): two or three sentences on what this specific product covers and who it is for. -->
+It covers what a boarding kennel, cattery or doggy daycare does every day: bookings and the lodging plan, arrivals and departures, the run sheet (feeding, medication, behaviour), care logs, incidents, vaccination certificates, daycare packages, what owners owe, and occupancy for the busy season. It checks the records against the NZ Code of Welfare for temporary housing and the NSW, ACT and Victorian boarding codes, and renders kennel cards, admission records, go-home reports and statements in your brand. Built for owner-run facilities in New Zealand and Australia with one to a few sites.
+
+### Your first hour: ten things to ask for
+
+1. "Who is in today, and who hasn't been fed or had their meds?"
+2. "Who arrives tomorrow without a current vaccination?"
+3. "Check Max in to K3, bright and eating, 34 kilos."
+4. "Max has a honking cough. Log it as infectious and move him to isolation."
+5. "Which nights over Christmas are full?"
+6. "Book Luna for daycare Thursday off her package."
+7. "Who owes us money and has already booked again?"
+8. "Run the record checks and tell me what to fix first."
+9. "Draft the go-home note for Bella."
+10. "Add a field for the owner's pick-up person, and show it on the kennel card." (`/customise`)
 
 ## Why no front end
 
@@ -63,7 +76,7 @@ npm install
 npm run demo
 ```
 
-Then open the folder in Claude Code and type a slash command. <!-- TODO(author): name the first command to try. -->
+Then open the folder in Claude Code and type `/attention`: it lists what needs a person today, record checks first. Then try `/in-house` for the run sheet and `/occupancy` for the busy nights ahead.
 
 ### Use it with your own Postgres or Supabase
 
@@ -71,15 +84,80 @@ Copy `.env.example` to `.env`, set `DATABASE_URL`, then `npm run migrate`. Same 
 
 ## The commands
 
-<!-- TODO(author): a table of the slash commands in .claude/commands and what each one does. -->
-
 | Command | What it does |
 |---|---|
-| `/...` | ... |
+| `/in-house` | The run sheet: who is in, which run, feeding, medication, last checked |
+| `/arrivals` | Today's arrivals with vaccination status and care notes |
+| `/departures` | Who goes home today, the bill, treatment to hand over |
+| `/daycare` | Today's daycare roster |
+| `/occupancy` | Nights at 80% or more for the next 90, over capacity first |
+| `/book` | Book boarding or a daycare day, with vaccination and full-night warnings |
+| `/check-in` | Check in with condition on arrival; refuses an unvaccinated animal outside isolation |
+| `/check-out` | Check out and settle the nights; refuses until treatment is told to the owner |
+| `/cancel` | Cancel a booking or mark a no-show |
+| `/move` | Move to another run, for example isolation |
+| `/log` | Log feed, meds, walk, welfare, play |
+| `/incident` | Record an incident, tell the owner, resolve it |
+| `/vaccinate` | Record a vaccination certificate |
+| `/vax-due` | Booked stays with cover missing at arrival or lapsing during the stay |
+| `/pay` | Record a payment |
+| `/sell-package` | Sell a daycare package |
+| `/balances` | Who owes what |
+| `/packages` | Daycare packages: used, booked, left, expiry |
+| `/pet` | One pet's full record |
+| `/owner` | One owner's pets, stays and balance |
+| `/stay` | One stay with its care log |
+| `/attention` | Everything that needs a person today |
+| `/compliance` | Record checks against the boarding codes, each with its source |
+| `/weekly-review` | The Monday review, saved to drafts/ |
+| `/draft-reminder` | Vaccination reminders to owners (drafts) |
+| `/draft-confirmation` | Booking confirmation (draft) |
+| `/draft-report-card` | The go-home note from the care log (draft) |
+| `/questions` | Ten questions the Gingr dashboard does not answer |
+| `/revenue` | Takings by site |
+| `/import` | Bring owners, animals and reservations across from Gingr |
+| `/export` | Everything to one JSON file |
+| `/add` | Add or change a site, run, owner, pet or rate |
+| `/documents` | Kennel cards, admission records, go-home reports, statements |
+| `/view` | Today, occupancy and record-check pages |
+| `/new-view` | Add a page in plain language |
+| `/customise` | Make it yours: a field, a rule, a renamed stage |
 
-## Instead of gingr
+Every command drives one CLI, `node scripts/boarding.mjs` (`help` lists everything, `--json` on any command). Names match case-insensitively and by fragment; when two match, it lists both and stops.
 
-<!-- TODO(author): how to bring data across from Gingr; link docs/replace-gingr.md -->
+### Ten questions Gingr's dashboard does not answer
+
+`/questions` runs these against your records:
+
+1. Which nights in the next 90 days are 90% full or more, by site and service?
+2. Which booked pets will arrive without current vaccination cover, and how many days do their owners have to send it?
+3. Whose vaccination runs out part way through a stay already booked?
+4. Which daycare dogs came in the last 60 days but have nothing booked for the next 14?
+5. Which owners still owe money and already have another stay booked?
+6. Which daycare packages will expire with days unused?
+7. What does each site earn per occupied boarding night, by species, over the last 90 days?
+8. Which pets on medication have fewer doses logged than nights in house?
+9. Which kennels, suites and cattery runs sat empty most over the last 60 nights?
+10. Which owners spent the most across all their pets this year, stays and packages together?
+
+### Paperwork and pages
+
+- `npm run docs` renders kennel cards, admission records (the NSW record, kept everywhere), go-home reports and owner statements to `docs-out/`, using `brand.json` for your name, logo and colours.
+- `npm run view` renders today, occupancy and record-check pages to `views/`.
+- Record checks: [docs/compliance.md](docs/compliance.md).
+
+## Instead of Gingr
+
+Export owners, animals and reservations from Gingr as CSV, then:
+
+```bash
+node scripts/boarding.mjs import gingr --kind=owners --file=owners.csv --dry-run
+node scripts/boarding.mjs import gingr --kind=owners --file=owners.csv
+node scripts/boarding.mjs import gingr --kind=animals --file=animals.csv
+node scripts/boarding.mjs import gingr --kind=reservations --file=reservations.csv
+```
+
+Vaccine expiry columns become vaccination records. What maps, what does not carry over (cards, photos, the owner app), and how to rename columns: [docs/replace-gingr.md](docs/replace-gingr.md).
 
 ## Architecture
 

@@ -1,0 +1,4 @@
+Reservation ID,Animal Name,First Name,Last Name,Reservation Type,Start Date,End Date,Status,Location,Lodging,Total
+R-9001,Pepper,Grace,Lin,Boarding,08/10/2026,08/14/2026,Checked Out,Imported Kennels,K1,220.00
+R-9002,Duke,Oliver,Hart,Day Care,09/02/2026,09/02/2026,Checked Out,Imported Kennels,Yard,48.00
+R-9003,Smudge,Grace,Lin,Boarding,12/20/2026,12/27/2026,Confirmed,Imported Kennels,C1,224.00

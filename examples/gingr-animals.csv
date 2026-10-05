@@ -1,0 +1,4 @@
+Animal ID,Animal Name,Owner ID,First Name,Last Name,Species,Breed,Gender,Color,Birthday,Weight,Fixed,Feeding Instructions,Medications,DHPP Expiration,Bordetella Expiration,FVRCP Expiration
+A-501,Pepper,G-1001,Grace,Lin,Dog,Jack Russell Terrier,Female,white and tan,03/14/2021,7 kg,Yes,Half cup twice a day,,08/01/2027,08/01/2027,
+A-502,Smudge,G-1001,Grace,Lin,Cat,Domestic shorthair,Male,black,11/02/2019,5,Yes,Dry food free feed,,,,05/20/2027
+A-503,Duke,G-1002,Oliver,Hart,Dog,Rottweiler,Male,black and tan,06/30/2020,48,No,3 cups dry,Joint supplement with dinner,01/15/2026,01/15/2026,

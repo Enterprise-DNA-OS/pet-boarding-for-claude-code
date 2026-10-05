@@ -1,14 +1,31 @@
 [
   {
-    "name": "week",
-    "title": "This week",
-    "subtitle": "Pet Boarding for Claude Code: what needs attention, rendered by npm run view",
+    "name": "today",
+    "title": "Today",
+    "subtitle": "Arrivals, departures, who is in and what needs a person",
     "sections": [
-      {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
-      }
+      { "title": "Needs attention", "note": "Record checks first, then the money and the follow-ups.", "sql": "select area, subject, item, due_on from v_attention order by rank, due_on nulls last" },
+      { "title": "Arriving today and tomorrow", "sql": "select starts_on as arrives, site, pet, owner, phone, coalesce(nullif(vaccine_gap(pet_id, starts_on), ''), 'current') as vaccination, run from v_stays where status = 'booked' and starts_on between current_date and current_date + 1 order by starts_on, site, pet" },
+      { "title": "Going home today", "sql": "select site, run, pet, owner, phone, charge_cents, currency from v_stays where status = 'checked-in' and ends_on <= current_date order by site, pet" },
+      { "title": "In house", "sql": "select site, run, pet, feeding, medication, behaviour, to_char(last_check, 'DD Mon HH24:MI') as last_check from v_in_house order by site, run" }
+    ]
+  },
+  {
+    "name": "occupancy",
+    "title": "Occupancy",
+    "subtitle": "The next 90 nights against capacity",
+    "sections": [
+      { "title": "Nights at 80% or more", "sql": "select night, to_char(night, 'Dy') as day, site, service, booked, capacity, free from v_occupancy where pct >= 80 order by night, site" },
+      { "title": "By week", "sql": "select to_char(date_trunc('week', night), 'YYYY-MM-DD') as week_of, site, service, sum(booked)::int as booked_nights, sum(capacity)::int as capacity_nights, round(100.0 * sum(booked) / sum(capacity)) as pct from v_occupancy group by 1, 2, 3 order by 1, 2, 3" }
+    ]
+  },
+  {
+    "name": "compliance",
+    "title": "Record checks",
+    "subtitle": "Each finding with the rule and its source",
+    "sections": [
+      { "title": "Findings", "sql": "select rule, subject, site, finding, due_on, source from v_compliance order by rule, due_on" },
+      { "title": "Vaccination due before a booked stay", "sql": "select pet, owner, phone, starts_on, vaccine_gap(pet_id, starts_on) as missing_at_arrival from v_stays where status = 'booked' and vaccine_gap(pet_id, starts_on) <> '' order by starts_on" }
     ]
   }
 ]

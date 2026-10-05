@@ -1,11 +1,48 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
+    "name": "kennel-card",
+    "title": "Kennel card",
+    "for_each": "select s.id, p.name || ' ' || coalesce(r.name, 'no run') as name from stays s join pets p on p.id = s.pet_id left join runs r on r.id = s.run_id where s.status = 'checked-in' order by r.name",
     "file": "name",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      { "title": "Who is in this run", "sql": "select p.name as pet, p.species, p.breed, p.sex, p.colour, p.weight_kg as weight_kg, s.starts_on as arrived, s.ends_on as going_home from stays s join pets p on p.id = s.pet_id where s.id = $1" },
+      { "title": "Care", "sql": "select p.feeding, p.medication, p.behaviour from stays s join pets p on p.id = s.pet_id where s.id = $1" },
+      { "title": "If something goes wrong", "sql": "select o.name as owner, o.phone, o.emergency_contact, o.vet_name as usual_vet, o.vet_phone from stays s join pets p on p.id = s.pet_id join owners o on o.id = p.owner_id where s.id = $1" },
+      { "title": "Vaccination", "sql": "select v.vaccine, v.given_on, v.due_on, v.evidence_ref from stays s join vaccinations v on v.pet_id = s.pet_id where s.id = $1 order by v.given_on desc" }
+    ]
+  },
+  {
+    "name": "admission-record",
+    "title": "Admission record",
+    "for_each": "select s.id, p.name || ' ' || s.starts_on as name from stays s join pets p on p.id = s.pet_id where s.kind = 'boarding' and s.status in ('checked-in','checked-out') and s.starts_on >= current_date - 30 order by s.starts_on",
+    "file": "name",
+    "sections": [
+      { "title": "Animal", "sql": "select p.name, p.species, p.breed, p.sex, p.colour, p.birth_date, p.microchip, s.arrival_weight_kg as weight_on_arrival_kg, s.arrival_condition as condition_on_arrival from stays s join pets p on p.id = s.pet_id where s.id = $1" },
+      { "title": "Owner and usual vet", "sql": "select o.name as owner, o.address, o.phone, o.emergency_contact, o.vet_name as usual_vet, o.vet_phone, s.ends_on as expected_collection from stays s join pets p on p.id = s.pet_id join owners o on o.id = p.owner_id where s.id = $1" },
+      { "title": "Health status at admission", "sql": "select coalesce(nullif(vaccine_gap(s.pet_id, s.starts_on), ''), 'current') as vaccination, p.heartworm as heartworm_prevention, p.medication, p.feeding as diet, s.override_reason from stays s join pets p on p.id = s.pet_id where s.id = $1" },
+      { "title": "Treatment during the stay", "sql": "select i.kind, i.summary, i.vet_treatment, to_char(i.owner_told_at, 'YYYY-MM-DD') as owner_told from incidents i where i.stay_id = $1" }
+    ]
+  },
+  {
+    "name": "go-home-report",
+    "title": "Go-home report",
+    "for_each": "select s.id, p.name || ' ' || s.ends_on as name from stays s join pets p on p.id = s.pet_id where s.status = 'checked-out' and s.ends_on >= current_date - 14 order by s.ends_on",
+    "file": "name",
+    "sections": [
+      { "title": "The stay", "sql": "select pet, owner, site, starts_on as arrived, ends_on as went_home, nights, charge_cents, currency from v_stays where id = $1" },
+      { "title": "How it went", "sql": "select to_char(logged_at, 'Dy DD Mon HH24:MI') as at, kind, note from care_logs where stay_id = $1 order by logged_at" },
+      { "title": "Anything to know", "sql": "select kind, summary, vet_treatment, action from incidents where stay_id = $1" }
+    ]
+  },
+  {
+    "name": "owner-statement",
+    "title": "Statement",
+    "for_each": "select id, owner as name from v_balances where balance_cents > 0",
+    "file": "name",
+    "sections": [
+      { "title": "Stays and packages", "sql": "select pet as item, starts_on as from_date, ends_on as to_date, nights, charge_cents, currency from v_stays where owner_id = $1 and status in ('checked-in','checked-out','no-show') union all select name, purchased_on, expires_on, days, price_cents, currency from packages where owner_id = $1 order by 2" },
+      { "title": "Payments received", "sql": "select paid_on, method, reference, amount_cents, currency from payments where owner_id = $1 order by paid_on" },
+      { "title": "Balance", "sql": "select currency, charged_cents, paid_cents, balance_cents from v_balances where id = $1" }
     ]
   }
 ]
